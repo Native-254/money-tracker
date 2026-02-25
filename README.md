@@ -270,5 +270,12 @@ Returns the wallet's balance and full transaction history (newest first).
 
 ---
 
+## Real time API Tests
+Transaction API test
+<img width="965" height="1048" alt="Screenshot from 2026-02-25 18-34-57" src="https://github.com/user-attachments/assets/c9d8a893-2938-4a44-9bf4-89a4d5332dd6" />
+Users API tets 
+<img width="965" height="1048" alt="Screenshot from 2026-02-25 18-36-18" src="https://github.com/user-attachments/assets/c5487152-db7e-4d19-a25e-a3d2cf2f8a72" />
+
+
 
 # money-tracker
