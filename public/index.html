@@ -24,7 +24,7 @@
   <style>
     /* ─── CSS Variables ─────────────────────────────────────────── */
     :root {
-      --bg-dark:       #b8beb9;   /* deep forest green-black         */
+      --bg-dark:       #ffffff;   /* deep forest green-black         */
       --bg-card:       #363837;   /* slightly lighter card surface   */
       --bg-section:    #242525;   /* recommendation section bg       */
       --gold:          #c8a84b;   /* primary gold accent             */
@@ -41,7 +41,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: #c5cac6;
+      background-color: #ffffff;
       font-family: 'DM Sans', sans-serif;
       color: var(--text-primary);
       min-height: 100vh;
@@ -88,13 +88,13 @@
       justify-content: flex-start;
       gap: 16px;
       min-height: 200px;
-      border-radius: 2px;
-      box-sizing: border-box;
     }
 
     /* Border on fade-in state */
     .fade-in {
-      border: 2px solid rgb(190, 211, 97);
+      border: solid rgb(190, 211, 97);
+      border-width: 2px 2px 2px 2px;
+      padding: 12px 16px;
     }
 
     .hero::before {
@@ -144,6 +144,9 @@
       margin-bottom: 8px;
       letter-spacing: 0.01em;
       text-align: right;
+      position: relative;
+      left: 28%;
+      transform: translateX(28%);
     }
 
     .hero p.tagline {
@@ -152,6 +155,8 @@
       line-height: 1.5;
       max-width: 260px;
       text-align: left;
+      left: 50%;
+      transform: translateX(50%);
     }
 
     /* ─── Member Grid ───────────────────────────────────────────── */
@@ -160,6 +165,8 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
+      background: rgb(49, 48, 48);
+      border: #232e27;
     }
 
     .member-card {
@@ -233,11 +240,13 @@
 
     /* ─── Recommendation Section ────────────────────────────────── */
     .recommendation {
-      background: #232e27;
-      margin: 0 16px;
+      background: rgb(49, 48, 48);
+      margin: 20px 16px 0;
       border-radius: var(--radius);
       padding: 18px 16px;
-      border: 1px solid #33463a;
+      border: 1px solid #2a2b2a;
+      background: rgb(49, 48, 48);
+
     }
 
     .recommendation h4 {
@@ -250,8 +259,13 @@
 
     .recommendation p {
       font-size: 0.75rem;
-      color: #8fa090;
+      color: #ffffff;
       line-height: 1.6;
+    }
+
+    .recommendation p.clored {
+      color: #a0d63b;
+      font-weight: 500;
     }
 
     /* ─── Membership Blocks ─────────────────────────────────────── */
@@ -271,7 +285,7 @@
 
     /* Clickable header row */
     .membership-header {
-      background: #c8a84b;
+      background: #a0d63b;
       padding: 14px 16px;
       display: flex;
       align-items: center;
@@ -281,7 +295,7 @@
       transition: background var(--transition);
     }
 
-    .membership-header:hover { background: #dfc070; }
+    .membership-header:hover { background: #546db3; }
 
     .membership-header .label {
       font-family: 'DM Sans', sans-serif;
@@ -309,7 +323,7 @@
 
     /* Description body — hidden by default */
     .membership-body {
-      background: #2a3630;
+      background: #2d2e2d;
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.4s ease, padding 0.3s ease;
@@ -323,27 +337,26 @@
 
     .membership-body p {
       font-size: 0.75rem;
-      color: #8fa090;
+      color: #ffffff;
       line-height: 1.65;
     }
 
     /* ─── Details Link ──────────────────────────────────────────── */
     .details-link {
       margin: 12px 16px 20px;
-      background: linear-gradient(90deg, #3a5040, #2d4035);
-      border-radius: var(--radius);
+      background: #a0d63b;
+      border-radius: 12px;
       padding: 12px 16px;
       text-align: center;
-      border: 1px solid #a08030;
       cursor: pointer;
       transition: background var(--transition), border-color var(--transition);
     }
 
-    .details-link:hover { background: linear-gradient(90deg, #445a48, #384a3e); border-color: #c8a84b; }
+    .details-link:hover { background: linear-gradient(90deg, #445a48, #384a3e); }
 
     .details-link a {
       font-size: 0.73rem;
-      color: #c8a84b;
+      color: #ffffff;
       text-decoration: none;
       font-weight: 500;
       letter-spacing: 0.03em;
@@ -351,8 +364,8 @@
 
     /* ─── Footer ────────────────────────────────────────────────── */
     .site-footer {
-      background: #c8a84b;
-      padding: 12px 16px;
+      background: #a0d63b;
+      padding: 2px 16px;
       text-align: center;
       margin-top: auto;
       position: relative;
@@ -368,7 +381,7 @@
     .whatsapp-btn {
       position: absolute;
       right: 16px;
-      top: 50%;
+      top: -23%;
       transform: translateY(-50%);
       width: 36px;
       height: 36px;
@@ -495,9 +508,12 @@
     <!-- ─── Recommendation ───────────────────────────────────── -->
     <div class="recommendation fade-in">
       <h4>Now let's make you great!</h4>
-      <p>
+      <p class="clored">
         You have shown us where you are doing well and where we can support
-        you to be great! From your profile we recommend these memberships.
+        you to be great!
+      </p>
+      <p>
+        From your profile we recommend these memberships.
         Pick on that fits you best and start your financial adventure.
       </p>
     </div>
