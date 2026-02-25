@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FourPoint Management — Investment Profile</title>
+
+  <!-- Bootstrap 5 -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <!-- Bootstrap Icons -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    rel="stylesheet"
+  />
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ─── CSS Variables ─────────────────────────────────────────── */
+    :root {
+      --bg-dark:       #1e2820;   /* deep forest green-black         */
+      --bg-card:       #2a3630;   /* slightly lighter card surface   */
+      --bg-section:    #232e27;   /* recommendation section bg       */
+      --gold:          #c8a84b;   /* primary gold accent             */
+      --gold-light:    #dfc070;   /* lighter gold for hovers         */
+      --gold-muted:    #a08030;   /* muted gold for borders          */
+      --text-primary:  #f0ead8;   /* warm off-white                  */
+      --text-muted:    #8fa090;   /* muted sage                      */
+      --text-dark:     #1e2820;   /* for text on gold backgrounds    */
+      --radius:        8px;
+      --transition:    0.3s ease;
+    }
+
+    /* ─── Base ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #141a15;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ─── Phone-frame wrapper (optional on desktop) ─────────────── */
+    .app-shell {
+      width: 100%;
+      max-width: 420px;
+      min-height: 100vh;
+      background-color: var(--bg-dark);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Top Status Bar ────────────────────────────────────────── */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      background: var(--bg-dark);
+    }
+
+    .status-bar .icons { display: flex; gap: 4px; align-items: center; }
+
+    /* ─── Hero / Profile Header ─────────────────────────────────── */
+    .hero {
+      background: linear-gradient(160deg, #2e3d30 0%, #1e2820 100%);
+      padding: 24px 20px 28px;
+      text-align: center;
+      border-bottom: 1px solid #33463a;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* subtle radial glow behind avatar */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -20px; left: 50%;
+      transform: translateX(-50%);
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, rgba(200,168,75,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+
+    .avatar-wrap img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #c8a84b;
+    }
+
+    /* placeholder avatar if no image */
+    .avatar-placeholder {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3a5040, #2a3a30);
+      border: 4px solid #c8a84b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: #c8a84b;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+    }
+
+    .hero h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #f0ead8;
+      margin-bottom: 8px;
+      letter-spacing: 0.01em;
+    }
+
+    .hero p.tagline {
+      font-size: 0.8rem;
+      color: #8fa090;
+      line-height: 1.5;
+      max-width: 260px;
+      margin: 0 auto;
+    }
+
+    /* ─── Member Grid ───────────────────────────────────────────── */
+    .member-grid {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .member-card {
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid transparent;
+      transition: border-color var(--transition), transform var(--transition);
+      cursor: pointer;
+    }
+
+    /* Member card color variations */
+    .member-card:nth-child(1) {
+      background: #f4d4d8;  /* soft pink */
+    }
+
+    .member-card:nth-child(2) {
+      background: #d4e8b8;  /* soft green */
+    }
+
+    .member-card:nth-child(3) {
+      background: #f4e8b8;  /* soft yellow/gold */
+    }
+
+    .member-card:nth-child(4) {
+      background: #f4d4d8;  /* soft pink */
+    }
+
+    .member-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .member-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(200, 168, 75, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 600;
+      color: #4a4a4a;
+      flex-shrink: 0;
+      border: none;
+    }
+
+    .member-info { flex: 1; min-width: 0; }
+
+    .member-name {
+      font-size: 0.7rem;
+      color: #4a4a4a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+      font-weight: 500;
+    }
+
+    .member-score {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #2a2a2a;
+      line-height: 1;
+      margin-top: 3px;
+    }
+
+    /* ─── Recommendation Section ────────────────────────────────── */
+    .recommendation {
+      background: #232e27;
+      margin: 0 16px;
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      border: 1px solid #33463a;
+    }
+
+    .recommendation h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      color: #c8a84b;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .recommendation p {
+      font-size: 0.75rem;
+      color: #8fa090;
+      line-height: 1.6;
+    }
+
+    /* ─── Membership Blocks ─────────────────────────────────────── */
+    .memberships {
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .membership-block {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Clickable header row */
+    .membership-header {
+      background: #c8a84b;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      transition: background var(--transition);
+    }
+
+    .membership-header:hover { background: #dfc070; }
+
+    .membership-header .label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .membership-header .label span {
+      font-weight: 300;
+      letter-spacing: 0.12em;
+    }
+
+    .membership-header .chevron {
+      color: var(--text-dark);
+      font-size: 1rem;
+      transition: transform var(--transition);
+    }
+
+    .membership-header.open .chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Description body — hidden by default */
+    .membership-body {
+      background: #2a3630;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+      padding: 0 16px;
+    }
+
+    .membership-body.visible {
+      max-height: 200px;
+      padding: 14px 16px;
+    }
+
+    .membership-body p {
+      font-size: 0.75rem;
+      color: #8fa090;
+      line-height: 1.65;
+    }
+
+    /* ─── Details Link ──────────────────────────────────────────── */
+    .details-link {
+      margin: 12px 16px 20px;
+      background: linear-gradient(90deg, #3a5040, #2d4035);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      text-align: center;
+      border: 1px solid #a08030;
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    .details-link:hover { background: linear-gradient(90deg, #445a48, #384a3e); border-color: #c8a84b; }
+
+    .details-link a {
+      font-size: 0.73rem;
+      color: #c8a84b;
+      text-decoration: none;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+
+    /* ─── Footer ────────────────────────────────────────────────── */
+    .site-footer {
+      background: #c8a84b;
+      padding: 12px 16px;
+      text-align: center;
+      margin-top: auto;
+      position: relative;
+    }
+
+    .site-footer p {
+      font-size: 0.7rem;
+      color: #1e2820;
+      font-weight: 500;
+    }
+
+    /* WhatsApp floating button */
+    .whatsapp-btn {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      background: #25d366;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.2rem;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(37,211,102,0.45);
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    .whatsapp-btn:hover {
+      transform: translateY(-50%) scale(1.1);
+      box-shadow: 0 4px 14px rgba(37,211,102,0.55);
+      color: #fff;
+    }
+
+    /* ─── Responsive — tablet / desktop ─────────────────────────── */
+    @media (min-width: 576px) {
+      body { padding: 32px 0; background: #0d1210; }
+
+      .app-shell {
+        border-radius: 24px;
+        box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px #33463a;
+        min-height: auto;
+        overflow: hidden;
+      }
+    }
+
+    /* ─── Page-load fade-in animation ───────────────────────────── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    .fade-in:nth-child(1) { animation-delay: 0.05s; }
+    .fade-in:nth-child(2) { animation-delay: 0.15s; }
+    .fade-in:nth-child(3) { animation-delay: 0.25s; }
+    .fade-in:nth-child(4) { animation-delay: 0.35s; }
+    .fade-in:nth-child(5) { animation-delay: 0.45s; }
+    .fade-in:nth-child(6) { animation-delay: 0.55s; }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  APP SHELL                                                  -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="app-shell">
+
+    <!-- Status bar (cosmetic, matching the mobile mockup) -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="icons">
+        <i class="bi bi-reception-4"></i>
+        <i class="bi bi-wifi"></i>
+        <i class="bi bi-battery-half"></i>
+      </div>
+    </div>
+
+    <!-- ─── Hero ─────────────────────────────────────────────── -->
+    <div class="hero fade-in">
+      <div class="avatar-wrap">
+        <!-- Avatar: shows initials if image fails to load -->
+        <img
+          src="https://i.pravatar.cc/150?img=68"
+          alt="Michael's profile photo"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="avatar-placeholder" style="display:none;">M</div>
+      </div>
+      <h2>Michael</h2>
+      <p class="tagline">
+        You've officially joined your first investment knowledge club!
+      </p>
+    </div>
+
+    <!-- ─── Member Grid ───────────────────────────────────────── -->
+    <div class="member-grid fade-in" role="list" aria-label="Community members">
+
+      <div class="member-card" role="listitem">
+        <div class="member-avatar">B</div>
+        <div class="member-info">
+          <div class="member-name">Benard<br>Makodingo</div>
+          <div class="member-score">350</div>
+        </div>
+      </div>
+
+      <div class="member-card" role="listitem">
+        <div class="member-avatar">K</div>
+        <div class="member-info">
+          <div class="member-name">kigSmall<br>Foot</div>
+          <div class="member-score">225</div>
+        </div>
+      </div>
+
+      <div class="member-card" role="listitem">
+        <div class="member-avatar">C</div>
+        <div class="member-info">
+          <div class="member-name">Caroline<br>Likhol</div>
+          <div class="member-score">117</div>
+        </div>
+      </div>
+
+      <div class="member-card" role="listitem">
+        <div class="member-avatar">C</div>
+        <div class="member-info">
+          <div class="member-name">Caroline<br>Likhol</div>
+          <div class="member-score">321</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ─── Recommendation ───────────────────────────────────── -->
+    <div class="recommendation fade-in">
+      <h4>Now let's make you great!</h4>
+      <p>
+        You have shown us where you are doing well and where we can support
+        you to be great! From your profile we recommend these memberships.
+        Pick on that fits you best and start your financial adventure.
+      </p>
+    </div>
+
+    <!-- ─── Membership Blocks ────────────────────────────────── -->
+    <div class="memberships fade-in">
+
+      <!-- Foundation Membership -->
+      <div class="membership-block">
+        <div
+          class="membership-header"
+          id="foundationToggle"
+          role="button"
+          tabindex="0"
+          aria-expanded="false"
+          aria-controls="foundationBody"
+          onclick="toggleMembership('foundation')"
+          onkeydown="if(event.key==='Enter'||event.key===' ') toggleMembership('foundation')"
+        >
+          <span class="label"><strong>FOUNDATION</strong> <span>MEMBERSHIP</span></span>
+          <i class="bi bi-chevron-down chevron" id="foundationChevron"></i>
+        </div>
+        <div class="membership-body" id="foundationBody" role="region" aria-labelledby="foundationToggle">
+          <p>
+            We invest for you, in shares and in the Mansa-X global fund.
+            Service is free online with your personal representative, but
+            service in the office may have extra charges.
+          </p>
+        </div>
+      </div>
+
+      <!-- Economy Membership -->
+      <div class="membership-block">
+        <div
+          class="membership-header"
+          id="economyToggle"
+          role="button"
+          tabindex="0"
+          aria-expanded="false"
+          aria-controls="economyBody"
+          onclick="toggleMembership('economy')"
+          onkeydown="if(event.key==='Enter'||event.key===' ') toggleMembership('economy')"
+        >
+          <span class="label"><strong>ECONOMY</strong> <span>MEMBERSHIP</span></span>
+          <i class="bi bi-chevron-down chevron" id="economyChevron"></i>
+        </div>
+        <div class="membership-body" id="economyBody" role="region" aria-labelledby="economyToggle">
+          <p>
+            We will invest your money for you at a guaranteed rate with the
+            Mansa-X global fund. Service is free online with your personal
+            representative, but service in the office may have extra charges.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ─── Details Link ─────────────────────────────────────── -->
+    <div class="details-link fade-in">
+      <a href="#" aria-label="View full membership details">
+        A closer look at the memberships details is available here
+      </a>
+    </div>
+
+    <!-- ─── Footer ───────────────────────────────────────────── -->
+    <footer class="site-footer fade-in">
+      <p>FourPoint Management &copy; 2025. All Rights Reserved.</p>
+      <a
+        href="https://wa.me/"
+        class="whatsapp-btn"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Contact us on WhatsApp"
+      >
+        <i class="bi bi-whatsapp"></i>
+      </a>
+    </footer>
+
+  </div><!-- /.app-shell -->
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    /**
+     * toggleMembership
+     * Reveals or hides the description body of a membership block.
+     * @param {string} key - 'foundation' or 'economy'
+     */
+    function toggleMembership(key) {
+      const body    = document.getElementById(key + 'Body');
+      const header  = document.getElementById(key + 'Toggle');
+      const chevron = document.getElementById(key + 'Chevron');
+
+      const isOpen = body.classList.contains('visible');
+
+      // Toggle visibility
+      body.classList.toggle('visible', !isOpen);
+      header.classList.toggle('open', !isOpen);
+
+      // Update ARIA state for accessibility
+      header.setAttribute('aria-expanded', String(!isOpen));
+    }
+  </script>
+
+</body>
+</html>
