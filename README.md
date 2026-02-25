@@ -270,19 +270,5 @@ Returns the wallet's balance and full transaction history (newest first).
 
 ---
 
-## Suggested Commit History
 
-Below is a recommended commit sequence that clearly demonstrates development progress:
-
-```
-feat: initial Laravel project setup
-feat: created user, wallet, and transaction migrations
-feat: added User, Wallet, and Transaction models with relationships
-feat: implemented UserController (store and show)
-feat: implemented WalletController (store and show)
-feat: implemented TransactionController (store)
-feat: defined API routes for users, wallets, and transactions
-feat: added validation for all request fields
-docs: added README with setup instructions and API documentation
-```
 # money-tracker
