@@ -11,7 +11,6 @@ A simple RESTful API built with **PHP Laravel** that allows users to manage mult
 - [Database Design](#database-design)
 - [API Endpoints](#api-endpoints)
 - [Design Decisions](#design-decisions)
-- [Suggested Commit History](#suggested-commit-history)
 
 ---
 
