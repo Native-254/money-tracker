@@ -11,6 +11,9 @@ class AuthController extends Controller
 {
     public function register(Request $request): JsonResponse
     {
+          $request->merge([
+        'name' => strip_tags($request->input('name')),
+         ]);
         $validated = $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
@@ -33,25 +36,28 @@ class AuthController extends Controller
     }
 
     public function login(Request $request): JsonResponse
-    {
-        $validated = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required|string',
-        ]);
+{
+    $validated = $request->validate([
+        'email'    => 'required|email',
+        'password' => 'required|string',
+    ]);
 
-        $user = User::where('email', $validated['email'])->first();
+    $user = User::where('email', $validated['email'])->first();
 
-        if (! $user || ! Hash::check($validated['password'], $user->password)) {
-            return response()->json(['message' => 'Invalid credentials.'], 401);
-        }
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'message' => 'Login successful.',
-            'token'   => $token,
-        ]);
+    if (! $user || ! Hash::check($validated['password'], $user->password)) {
+        return response()->json(['message' => 'Invalid credentials.'], 401);
     }
+
+    // Delete all previous tokens before issuing a new one
+    $user->tokens()->delete();
+
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'message' => 'Login successful.',
+        'token'   => $token,
+    ]);
+}
 
     public function logout(Request $request): JsonResponse
     {
