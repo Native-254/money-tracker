@@ -18,6 +18,7 @@ class User extends Model
     use HasApiTokens;
 
     protected $fillable = ['name', 'email', 'password'];
+    protected $hidden = ['password', 'remember_token'];
 
     /**
      * All wallets belonging to this user (owned wallets).
