@@ -39,11 +39,11 @@ class Wallet extends Model
      * Uses the wallet_user pivot table with role and timestamps.
      */
     public function members(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class)
-                    ->withPivot('role')
-                    ->withTimestamps();
-    }
+{
+    return $this->belongsToMany(User::class, 'wallet_user')
+                ->withPivot('role')
+                ->withTimestamps();
+}
 
     /**
      * Calculate the current balance for this wallet.
