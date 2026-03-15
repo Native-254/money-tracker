@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Wallet;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * TransactionController
@@ -36,6 +37,25 @@ class TransactionController extends Controller
      */
     public function store(Request $request, Wallet $wallet): JsonResponse
     {
+        /** @var \App\Models\User $authUser */
+        $authUser = Auth::user();
+
+        // Allow both owners and invited members to add transactions
+        $isMember = $wallet->members()
+            ->where('user_id', $authUser->id)
+            ->exists();
+
+        if (! $isMember) {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
+        // Sanitize free-text description to strip any HTML/script tags (XSS protection)
+        $request->merge([
+            'description' => $request->input('description')
+                ? strip_tags($request->input('description'))
+                : null,
+        ]);
+
         // Validate all incoming fields
         $validated = $request->validate([
             'type'        => 'required|in:income,expense',   // only these two values are allowed

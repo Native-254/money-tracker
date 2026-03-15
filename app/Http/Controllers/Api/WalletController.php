@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * WalletController
@@ -17,25 +18,23 @@ class WalletController extends Controller
 {
     /**
      * POST /api/users/{user}/wallets
-     *
-     * Create a new wallet for the specified user.
-     *
-     * Required fields:
-     *   - name (string) — a friendly label for the wallet, e.g. "Business A"
-     *
-     * @param  Request  $request
-     * @param  User     $user     (route-model bound)
-     * @return JsonResponse
      */
     public function store(Request $request, User $user): JsonResponse
     {
-        // Validate the wallet name
+        /** @var \App\Models\User $authUser */
+        $authUser = Auth::user();
+
+        if ($user->id !== $authUser->id) {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
         ]);
 
-        // Associate the new wallet with the given user
         $wallet = $user->wallets()->create($validated);
+
+        $wallet->members()->attach($authUser->id, ['role' => 'owner']);
 
         return response()->json([
             'message' => 'Wallet created successfully.',
@@ -43,23 +42,27 @@ class WalletController extends Controller
                 'id'      => $wallet->id,
                 'user_id' => $wallet->user_id,
                 'name'    => $wallet->name,
-                'balance' => 0.00,   // new wallet always starts at zero
+                'balance' => 0.00,
             ],
         ], 201);
     }
 
     /**
      * GET /api/wallets/{wallet}
-     *
-     * Retrieve a single wallet's details.
-     * Returns the wallet's balance and its full transaction history.
-     *
-     * @param  Wallet  $wallet   (route-model bound)
-     * @return JsonResponse
      */
     public function show(Wallet $wallet): JsonResponse
     {
-        // Eager-load transactions, newest first
+        /** @var \App\Models\User $authUser */
+        $authUser = Auth::user();
+
+        $isMember = $wallet->members()
+            ->where('user_id', $authUser->id)
+            ->exists();
+
+        if (! $isMember) {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
         $transactions = $wallet->transactions()
             ->orderBy('created_at', 'desc')
             ->get();
@@ -73,5 +76,37 @@ class WalletController extends Controller
                 'transactions' => $transactions,
             ],
         ]);
+    }
+
+    /**
+     * POST /api/wallets/{wallet}/invite
+     */
+    public function invite(Request $request, Wallet $wallet): JsonResponse
+    {
+        /** @var \App\Models\User $authUser */
+        $authUser = Auth::user();
+
+        $isOwner = $wallet->members()
+            ->where('user_id', $authUser->id)
+            ->where('role', 'owner')
+            ->exists();
+
+        if (! $isOwner) {
+            return response()->json(['message' => 'Only the wallet owner can invite members.'], 403);
+        }
+
+        $validated = $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+        $invitee = User::where('email', $validated['email'])->first();
+
+        if ($wallet->members()->where('user_id', $invitee->id)->exists()) {
+            return response()->json(['message' => 'User is already a member of this wallet.'], 409);
+        }
+
+        $wallet->members()->attach($invitee->id, ['role' => 'member']);
+
+        return response()->json(['message' => 'User added to wallet successfully.']);
     }
 }

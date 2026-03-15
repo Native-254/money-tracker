@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * User Model
@@ -13,14 +15,27 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class User extends Model
 {
-    protected $fillable = ['name', 'email'];
+    use HasApiTokens;
+
+    protected $fillable = ['name', 'email', 'password'];
 
     /**
-     * All wallets belonging to this user.
+     * All wallets belonging to this user (owned wallets).
      */
     public function wallets(): HasMany
     {
         return $this->hasMany(Wallet::class);
+    }
+
+    /**
+     * All wallets this user is a member of (shared wallets).
+     * Uses the wallet_user pivot table with role and timestamps.
+     */
+    public function sharedWallets(): BelongsToMany
+    {
+        return $this->belongsToMany(Wallet::class)
+                    ->withPivot('role')
+                    ->withTimestamps();
     }
 
     /**
@@ -34,4 +49,4 @@ class User extends Model
         return (float) $this->wallets()->with('transactions')->get()
             ->sum(fn(Wallet $wallet) => $wallet->balance());
     }
-}
+    }

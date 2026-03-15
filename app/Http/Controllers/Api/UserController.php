@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * UserController
@@ -29,6 +30,11 @@ class UserController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        // Sanitize free-text fields to strip any HTML/script tags (XSS protection)
+        $request->merge([
+            'name' => strip_tags($request->input('name')),
+        ]);
+
         // Validate the incoming request fields
         $validated = $request->validate([
             'name'  => 'required|string|max:255',
@@ -56,6 +62,14 @@ class UserController extends Controller
      */
     public function show(User $user): JsonResponse
     {
+        /** @var \App\Models\User $user */
+        $authUser = Auth::user();
+
+        // Ensure authenticated user can only view their own profile
+        if ($user->id !== $authUser->id) {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
         // Load all wallets for this user (no transactions here — kept lightweight)
         $wallets = $user->wallets()->get();
 
